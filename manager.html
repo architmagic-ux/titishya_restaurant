@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>TITISHYA FAST FOOD — Manager Portal</title>
+  <title>YOUR RESTAURANT NAME — Manager Portal</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -33,7 +33,8 @@
       </div>
       <a href="/index.html" class="px-4 py-2 bg-gray-800 rounded text-gray-200">Customer View</a>
     </header>
-    <!-- DASHBOARD CARDS SECTION -->
+
+    <!-- DASHBOARD -->
     <section id="dashboard" class="bg-white rounded-xl p-6 mb-8 shadow-xl border border-gray-300">
       <div class="flex flex-wrap gap-4 mb-4 items-center">
         <h2 class="text-2xl font-extrabold text-gray-800">📊 Dashboard</h2>
@@ -68,7 +69,7 @@
       </div>
     </section>
 
-    <!-- INSIGHT -->
+    <!-- INSIGHTS -->
     <section class="bg-white border-4 border-yellow-500 shadow-lg rounded-xl py-10 px-8 my-10">
       <h3 class="text-2xl font-extrabold text-yellow-800 mb-7 tracking-wider">📊 Detailed Insights & Comparison</h3>
       <form class="flex flex-wrap gap-7 items-center mb-4">
@@ -99,6 +100,7 @@
       <div id="insightResult" class="insight-box"></div>
     </section>
 
+    <!-- ORDERS -->
     <div class="bg-gray-800 rounded-2xl p-4 mb-6 flex justify-between items-center">
       <div>
         <label class="text-sm text-gray-400 mr-2">Select Date:</label>
@@ -114,6 +116,7 @@
         </div>
       </div>
     </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <section>
         <h2 class="text-xl font-semibold text-amber-200 mb-4">Upcoming / Incoming Orders</h2>
@@ -125,8 +128,10 @@
       </section>
     </div>
   </div>
+
   <script>
     const socket = io();
+
     // ---- ORDER TABLES & SUMMARY ----
     const datePicker = document.getElementById('datePicker');
     datePicker.value = new Date().toISOString().slice(0,10);
@@ -148,64 +153,56 @@
       document.getElementById('countTakeaway').innerText = takeaway.length;
       document.getElementById('countDelivery').innerText = delivery.length;
 
-      // organize orders into incoming/delivered
+      // organize orders
       const incoming = orders.filter(o => o.status !== 'delivered' && o.status !== 'deleted');
       const delivered = orders.filter(o => o.status === 'delivered');
 
-      document.getElementById('incoming').innerHTML = incoming.map(o => `
-        <div class="bg-gray-900 rounded-lg border border-amber-400 p-4 shadow">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="order-type-badge order-type-${o.orderType}">${o.orderType.charAt(0).toUpperCase() + o.orderType.slice(1)}</span>
-              <span class="font-bold text-lg">${o.customerName}</span>
-              <div class="text-xs text-gray-400">${new Date(o.createdAt).toLocaleString()}</div>
-              <div class="text-xs text-gray-400 mt-1">${renderOrderDetails(o)}</div>
-            </div>
-            <div class="text-right">
-              <div class="font-semibold text-amber-200">₹${o.total}</div>
-              <div class="text-xs text-gray-400">${o.mobile ? "📱 " + o.mobile : ""}</div>
-            </div>
-          </div>
-          <ul class="mt-3 text-sm text-gray-200">
-            ${o.items.map(it=>`<li>• ${it.qty} × ${it.name} — ₹${it.price}</li>`).join('')}
-          </ul>
-          <div class="mt-3 flex gap-2">
-            <button class="card-btn px-3 py-1 bg-blue-600 rounded" onclick="updateStatus('${o._id}','preparing')">Preparing</button>
-            <button class="card-btn px-3 py-1 bg-green-600 rounded" onclick="updateStatus('${o._id}','delivered')">Delivered</button>
-            <button class="card-btn px-3 py-1 bg-red-600 rounded" onclick="deleteOrder('${o._id}')">Delete</button>
-            <button class="card-btn px-3 py-1 bg-amber-400 text-black rounded font-bold" onclick="printOrder('${o._id}')">Print</button>
-          </div>
-        </div>
-      `).join('');
+      document.getElementById('incoming').innerHTML = incoming.map(o => cardHtml(o, true)).join('');
+      document.getElementById('delivered').innerHTML = delivered.map(o => cardHtml(o, false)).join('');
+    }
 
-      document.getElementById('delivered').innerHTML = delivered.map(o => `
-        <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 shadow">
+    function cardHtml(o, isIncoming) {
+      return `
+        <div class="bg-${isIncoming ? 'gray-900 border border-amber-400' : 'gray-800 border border-gray-700'} rounded-lg p-4 shadow">
           <div class="flex justify-between items-start">
             <div>
               <span class="order-type-badge order-type-${o.orderType}">${o.orderType.charAt(0).toUpperCase() + o.orderType.slice(1)}</span>
-              <span class="font-bold text-lg">${o.customerName}</span>
+              <span class="font-bold text-lg">${o.customerName || '-'}</span>
               <div class="text-xs text-gray-400">${new Date(o.createdAt).toLocaleString()}</div>
               <div class="text-xs text-gray-400 mt-1">${renderOrderDetails(o)}</div>
             </div>
             <div class="text-right">
-              <div class="font-semibold text-green-300">₹${o.total}</div>
+              <div class="font-semibold ${isIncoming ? 'text-amber-200' : 'text-green-300'}">₹${o.total}</div>
               <div class="text-xs text-gray-400">${o.mobile ? "📱 " + o.mobile : ""}</div>
             </div>
           </div>
-          <ul class="mt-3 text-sm text-gray-300">
-            ${o.items.map(it=>`<li>• ${it.qty} × ${it.name} — ₹${it.price}</li>`).join('')}
+          <ul class="mt-3 text-sm ${isIncoming ? 'text-gray-200' : 'text-gray-300'}">
+            ${o.items.map(it=>`<li>• ${it.qty} × ${formatDisplayName(it)} — ₹${it.price}</li>`).join('')}
           </ul>
-          <div class="mt-3 flex gap-2">
-            <button class="card-btn px-3 py-1 bg-amber-400 text-black rounded font-bold" onclick="printOrder('${o._id}')">Print</button>
+          <div class="mt-3 flex flex-wrap gap-2">
+            ${isIncoming ? `
+              <button class="card-btn px-3 py-1 bg-blue-600 rounded" onclick="updateStatus('${o._id}','preparing')">Preparing</button>
+              <button class="card-btn px-3 py-1 bg-green-600 rounded" onclick="updateStatus('${o._id}','delivered')">Delivered</button>
+              <button class="card-btn px-3 py-1 bg-red-600 rounded" onclick="deleteOrder('${o._id}')">Delete</button>
+            ` : ``}
+            <button class="card-btn px-3 py-1 bg-teal-400 text-black rounded font-bold" onclick='bluetoothPrint(${JSON.stringify(o)})'>Bluetooth Print</button>
           </div>
         </div>
-      `).join('');
+      `;
     }
 
     function renderOrderDetails(o) {
-      if(o.orderType === 'dinein') return `Table: ${o.tableNumber || '—'}`;
-      else if(o.orderType === 'takeaway' || o.orderType === 'delivery') return `Address: ${o.address || '—'}`;
+      if (o.orderType === 'dinein') return `Table: ${o.tableNumber || '—'}`;
+      else if (o.orderType === 'takeaway' || o.orderType === 'delivery') return `Address: ${o.address || '—'}`;
       return '';
+    }
+
+    // Keep name exactly as visible (prevent showing "m1" etc.)
+    function formatDisplayName(it) {
+      // If your item has variant/size fields, append them cleanly:
+      const variant = it.variant || it.size || it.option || '';
+      const v = variant ? ` (${variant})` : '';
+      return `${it.name}${v}`;
     }
 
     async function updateStatus(id, status) {
@@ -225,54 +222,90 @@
       });
     }
 
-    window.printOrder = function(orderId) {
-      let btn = document.querySelector(`[onclick="printOrder('${orderId}')"]`);
-      let box = btn ? btn.closest('.bg-gray-900, .bg-gray-800') : null;
-      if (!box) return;
-      const orderType = box.querySelector('.order-type-badge')?.textContent || '';
-      const customerName = box.querySelector('.font-bold.text-lg')?.textContent || '';
-      const tableDetail = box.querySelector('.text-xs.text-gray-400.mt-1')?.textContent || '';
-      const total = box.querySelector('.font-semibold')?.textContent?.replace(/[^\d]/g,'') || '';
-      const items = [...box.querySelectorAll('ul li')].map(li => li.textContent);
-      let itemRows = items.map(txt => {
-        let m = txt.match(/(\d+)\s*[×x]\s*(.+?)\s*—\s*₹(\d+)/i);
-        if (m) {
-          return `<tr>
-            <td>${m[2]}</td>
-            <td style="text-align:center;">${m[1]}</td>
-            <td style="text-align:right;">₹${m[3]}</td>
-          </tr>`;
-        }
-        return '';
-      }).join('');
-      let win = window.open('', '', 'height=700,width=400');
-      win.document.write('<html><head><title>Order Print</title>');
-      win.document.write('<style>body{font-family:monospace,Arial,sans-serif;margin:30px;color:#222;background:#fff;} .bill-title{font-size:1.6em;font-weight:bold;text-align:center;color:#42210b;margin-bottom:12px;} .bill-section{margin-bottom:12px;font-size:1.05em;} .bill-table{width:100%;margin-top:7px;border-collapse:collapse;} .bill-table th,.bill-table td{border:1px solid #f3c770;padding:5px 7px;text-align:left;} .bill-table th{background:#ffd25a;color:#222;font-weight:bold;} .bill-total{font-size:1.1em;font-weight:700;text-align:right;margin-top:16px;} @media print{body{background:#fff;color:#222;}}</style></head><body>');
-      win.document.write(`
-        <div class="bill-title">YOUR RESTAURANT NAME</div>
-        <div class="bill-section"><b>Order Type:</b> ${orderType}</div>
-        <div class="bill-section"><b>Customer Name:</b> ${customerName}</div>
-        <div class="bill-section"><b>${tableDetail}</b></div>
-        <hr>
-        <strong>Order Details:</strong>
-        <table class="bill-table">
-          <thead>
-            <tr>
-              <th>Item</th><th>Qty</th><th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itemRows}
-          </tbody>
-        </table>
-        <div class="bill-total">Total: ₹${total}</div>
-      `);
-      win.document.write('</body></html>');
-      win.document.close();
-      win.onload = function() { win.focus(); win.print(); setTimeout(()=>win.close(), 700);}
+    // ============ BLUETOOTH PRINT (RawBT intent) ============
+    // 58mm (2-inch) printers are ~32 chars/line. We'll format columns:
+    // NAME(18) | QTY(4) | AMT(10)  -> total 32 chars
+    const LINE_WIDTH = 32;
+    function line(char='-') { return char.repeat(LINE_WIDTH) + '\n'; }
+    function padRight(str, len) {
+      str = (str ?? '').toString();
+      return str.length >= len ? str.slice(0, len) : str + ' '.repeat(len - str.length);
+    }
+    function padLeft(str, len) {
+      str = (str ?? '').toString();
+      return str.length >= len ? str.slice(0, len) : ' '.repeat(len - str.length) + str;
+    }
+    function money(n) {
+      // ensure integer/2-dec look nice on small receipts
+      const v = Number(n || 0);
+      return '₹' + (Number.isInteger(v) ? v : v.toFixed(2));
+    }
+    function formatItemRow(name, qty, amt) {
+      const nameCol = padRight(name, 18);
+      const qtyCol  = padLeft(qty.toString(), 4);
+      const amtCol  = padLeft(amt, 10);
+      return nameCol + qtyCol + amtCol + '\n';
     }
 
-    // Socket and calendar for live incoming/delivered orders:
+    function buildReceipt(order) {
+      // Header
+      let out = '';
+      out += 'YOUR RESTAURANT NAME\n';
+      out += line('-');
+      out += `Order Type: ${String(order.orderType || '').toUpperCase()}\n`;
+      out += `Customer: ${order.customerName || '-'}\n`;
+      if (order.orderType === 'dinein' && order.tableNumber) out += `Table No: ${order.tableNumber}\n`;
+      if ((order.orderType === 'delivery' || order.orderType === 'takeaway') && order.address) out += `Address: ${order.address}\n`;
+      out += line('-');
+
+      // Column header
+      out += formatItemRow('Item', 'Qty', 'Amt');
+
+      // Items
+      (order.items || []).forEach(it => {
+        const visibleName = formatDisplayName(it); // keep human-friendly, e.g. "Paneer Tikka Masala (Full Plate)"
+        const name = visibleName.length > 18 ? visibleName.slice(0,18) : visibleName;
+        const amt = money((it.qty || 0) * (it.price || 0));
+        out += formatItemRow(name, it.qty || 0, amt);
+      });
+
+      out += line('-');
+
+      // TOTAL — emphasize with markers to stand out on thermal
+      const totalLine = 'TOTAL: ' + money(order.total);
+      // Place total right-aligned on the line
+      const totalLabel = padRight('TOTAL:', 8); // "TOTAL:" + some space
+      const totalAmt = padLeft(money(order.total), LINE_WIDTH - totalLabel.length);
+      out += totalLabel + totalAmt + '\n';
+
+      // Meta
+      out += `Status: ${order.status || 'incoming'}\n`;
+      out += `${new Date(order.createdAt).toLocaleString()}\n`;
+      out += '\nThank you! Visit Again\n\n';
+
+      return out;
+    }
+
+    function bluetoothPrint(order) {
+      try {
+        const receipt = buildReceipt(order);
+        // RawBT intent scheme
+        const uri = 'rawbt:' + encodeURIComponent(receipt);
+        // try navigation
+        window.location.href = uri;
+
+        // Fallback help (user stays on page; RawBT will handle the intent if installed)
+        setTimeout(() => {
+          // If nothing happened, user probably doesn’t have RawBT / intent blocked.
+          // We won’t spam alerts—only hint once per click.
+          console.info('If printing did not start, install/open RawBT and allow intents.');
+        }, 1200);
+      } catch (e) {
+        alert('Bluetooth print failed: ' + (e.message || e));
+      }
+    }
+
+    // --- Live updates ---
     datePicker.onchange = () => fetchOrders(datePicker.value);
     socket.on('newOrder', (o) => {
       if ((o.createdAt || '').slice(0,10) === datePicker.value) fetchOrders(datePicker.value);
@@ -280,7 +313,7 @@
     socket.on('orderUpdated', (o) => { fetchOrders(datePicker.value); });
     fetchOrders(datePicker.value);
 
-    // ------- DASHBOARD + INSIGHTS SCRIPTS (as before) -------
+    // ------- DASHBOARD + INSIGHTS (unchanged logic) -------
     const dashboardPeriod = document.getElementById('dashboardPeriod');
     const dashboardDate = document.getElementById('dashboardDate');
     dashboardDate.value = new Date().toISOString().slice(0,10);
@@ -289,44 +322,50 @@
       let r = await fetch(`/api/dashboard/sales?period=${period}&date=${d}`); let stats = await r.json();
       document.getElementById('sales-today').textContent = '₹' + (stats.total || 0);
       document.getElementById('orders-month').textContent = stats.count || 0;
+
       r = await fetch(`/api/dashboard/peakhour?date=${d}`); let peak = await r.json();
       document.getElementById('peak-hour').textContent = peak ? `${peak._id.hour}:00` : '-';
+
       r = await fetch(`/api/dashboard/topdish?date=${d}`); let dish = await r.json();
       document.getElementById('top-dish').textContent = dish ? dish._id : '-';
     }
     dashboardPeriod.onchange = dashboardDate.onchange = renderDashboard;
     window.addEventListener('DOMContentLoaded', renderDashboard);
 
-    // ------- INSIGHTS & CHARTS (code from previous answer) -------
+    // ------- INSIGHTS & CHARTS -------
     const compareBy = document.getElementById('compareBy');
     const compareByLabel = document.getElementById('compareByLabel');
     const insightType = document.getElementById('insightType');
     const insightName = document.getElementById('insightName');
+
     insightType.onchange = () => {
       if(insightType.value === "compare_sales") compareByLabel.style.display = "";
       else compareByLabel.style.display = "none";
       insightName.style.display = (insightType.value === "customer_search") ? "" : "none";
     }
+
     let myCustomChart = null;
     async function runInsight() {
       const type = insightType.value, from = document.getElementById('insightFrom').value,
-            to = document.getElementById('insightTo').value, name = insightName.value, by = compareBy.value;
+            to = document.getElementById('insightTo').value, name = insightName.value, by = compareBy.value || 'day';
       let html = '';
+
       if(type === "compare_sales") {
         let salesA, salesB, labelA, labelB;
         if(by === "day") {
           salesA = await fetch(`/api/dashboard/sales?period=day&date=${from}`).then(r=>r.json());
           salesB = await fetch(`/api/dashboard/sales?period=day&date=${to}`).then(r=>r.json());
-          labelA = from; labelB = to;
+          labelA = from || '—'; labelB = to || '—';
         } else if(by === "week") {
           salesA = await fetch(`/api/dashboard/sales?period=week&date=${from}`).then(r=>r.json());
           salesB = await fetch(`/api/dashboard/sales?period=week&date=${to}`).then(r=>r.json());
-          labelA = `Week of ${from}`; labelB = `Week of ${to}`;
+          labelA = `Week of ${from || '—'}`; labelB = `Week of ${to || '—'}`;
         } else if(by === "month") {
           salesA = await fetch(`/api/dashboard/sales?period=month&date=${from}`).then(r=>r.json());
           salesB = await fetch(`/api/dashboard/sales?period=month&date=${to}`).then(r=>r.json());
-          labelA = `Month: ${from.slice(0,7)}`; labelB = `Month: ${to.slice(0,7)}`;
+          labelA = `Month: ${(from || '—').slice(0,7)}`; labelB = `Month: ${(to || '—').slice(0,7)}`;
         }
+
         html = `<div class="mb-6 flex items-center gap-10">
           <div class="bg-yellow-200 rounded-xl p-4 shadow insight-big-value">${labelA}<br>₹${salesA.total||0}<br>
             <span class="insight-mid-value">Orders: ${salesA.count||0}</span></div>
@@ -336,9 +375,14 @@
         <div class="bg-white rounded-xl py-5 px-2 mb-4 shadow">
           <canvas id="myChart" width="400" height="180"></canvas>
         </div>`;
-        setTimeout(()=>{ renderChart([labelA,labelB], [salesA.total,salesB.total], 'Sales Comparison', 'bar'); },80);
+        document.getElementById('insightResult').innerHTML = html;
+
+        // draw after DOM updated
+        setTimeout(()=>{ renderChart([labelA,labelB], [salesA.total,salesB.total], 'Sales Comparison', 'bar'); },0);
+        return;
       }
-      else if(type === "repeat_customers") {
+
+      if(type === "repeat_customers") {
         const data = await fetch(`/api/dashboard/repeatcustomers?from=${from}&to=${to}`).then(r=>r.json());
         html = `<table class="insight-result-table table-auto w-full text-base font-semibold"><thead><tr><th>Name</th><th>Orders</th></tr></thead><tbody>`+
           data.map(c=>`<tr><td>${c._id}</td><td>${c.orders}</td></tr>`).join('')+`</tbody></table>`;
@@ -349,14 +393,19 @@
             : '<div class="text-base text-red-700">No data found in this time frame</div>';
       } else if(type === "customer_search" && name) {
         const data = await fetch(`/api/dashboard/repeatcustomers?from=${from}&to=${to}&name=${encodeURIComponent(name)}`).then(r=>r.json());
-        html = data && data.length 
+        html = data && data.length
          ? `<div class="text-2xl text-yellow-900 font-bold mb-2">${name} visited <span class="font-extrabold text-yellow-900">${data[0].orders}</span> times</div>`
          : `<div class="text-base text-red-700">${name} did not visit in this period.</div>`;
+      } else {
+        html = '<div class="text-base text-red-700">Choose an insight and date(s).</div>';
       }
       document.getElementById('insightResult').innerHTML = html;
     }
+
     function renderChart(labels, data, chartLabel, chartType = 'bar') {
-      const ctx = document.getElementById('myChart').getContext('2d');
+      const el = document.getElementById('myChart');
+      if (!el) return;
+      const ctx = el.getContext('2d');
       if (myCustomChart) myCustomChart.destroy();
       myCustomChart = new Chart(ctx, {
         type: chartType,
