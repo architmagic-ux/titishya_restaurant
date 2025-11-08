@@ -1,0 +1,10 @@
+{
+  "Main Course Veg": [
+    { "name": "Paneer Tikka Masala", "variants": { "Half": 130, "Full": 260 }, "image": "paneer.png" },
+    { "name": "Shahi Paneer", "variants": { "Half": 120, "Full": 240 }, "image": "shahi-paneer.jpg" }
+  ],
+  "Snacks": [
+    { "name": "Veg Burger", "variants": { "Regular": 60 }, "image": "burger.jpg" }
+  ]
+}
+
