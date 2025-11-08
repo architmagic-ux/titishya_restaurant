@@ -2,11 +2,10 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>YOUR RESTAURANT NAME — Order</title>
+  <title>Titishya Fast Food — Order</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .menu-img { width: 90px; height: 90px; object-fit: cover; border-radius:18px }
     .font-semibold, .font-bold { color: #fff !important; text-shadow: 0 1px 5px #000a !important; }
     select.variant-select { font-weight: bold; background: #ffd25a; color: #222; border-radius: 7px; border:none; box-shadow: 0 1px 4px #2224; padding: 4px 11px; font-size: 1em;}
     option { color: #222; background: #fffbe4; font-size:1em; }
@@ -14,10 +13,9 @@
     .text-gray-300, .text-gray-400, .text-amber-200 { color: #ffd25a !important; }
     input { color: #222 !important; background: #ffd25a !important; font-weight: bold !important; }
     input::placeholder { color: #6d4f00 !important; opacity: 1 !important; font-weight: bold !important; }
-    @media (max-width:600px){
-      body { font-size: 1.15em; }
-      .menu-card { margin:8px 0; padding:12px; }
-      #cart-bar { right:10px !important; bottom:10px !important; }
+    @media (max-width:768px){
+      aside { display:none; }
+      #mobile-cart-bar { display:flex !important; }
     }
   </style>
 </head>
@@ -25,16 +23,17 @@
   <div class="max-w-7xl mx-auto p-6">
     <header class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-4xl font-extrabold tracking-tight text-amber-300">YOUR RESTAURANT NAME</h1>
+        <h1 class="text-4xl font-extrabold tracking-tight text-amber-300">Titishya Fast Food</h1>
         <p class="text-sm text-amber-200/70">Contact: <b>+91-XXXXXXXXXX</b> • Near WOW Laundry — University Specials</p>
       </div>
     </header>
+
     <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Menu Area -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Order type selection -->
         <section class="bg-gray-900/60 rounded-2xl p-6 shadow-lg mb-6">
           <h2 class="text-xl font-semibold text-amber-300 mb-4">Order Type</h2>
-          <div class="flex gap-4 mb-2">
+          <div class="flex gap-4 mb-2 flex-wrap">
             <button class="orderTypeBtn px-4 py-2 rounded bg-amber-400 font-bold text-black" data-type="dinein">Dine-In</button>
             <button class="orderTypeBtn px-4 py-2 rounded bg-green-400 font-bold text-black" data-type="takeaway">Takeaway</button>
             <button class="orderTypeBtn px-4 py-2 rounded bg-blue-400 font-bold text-black" data-type="delivery">Delivery</button>
@@ -43,6 +42,8 @@
         </section>
         <section id="menuSections" class="space-y-6"></section>
       </div>
+
+      <!-- Desktop Cart -->
       <aside class="bg-gray-900/50 rounded-2xl p-5 shadow-lg h-fit sticky top-6">
         <h3 class="text-lg font-semibold text-amber-300 mb-3">🛒 Cart</h3>
         <div id="cartList" class="space-y-3 text-gray-200"></div>
@@ -56,28 +57,42 @@
       </aside>
     </main>
   </div>
-  <!-- Floating mobile cart/badge -->
-  <div id="cart-bar" style="position:fixed;bottom:20px;right:20px;z-index:999;">
-    <button onclick="scrollToCart()" style="background:#ffd25a; color:#222; border-radius:22px; box-shadow: 0 2px 8px #111; font-weight: bold;">
-      🛒 <span id="cart-count" style="background:red;color:white;border-radius:50%;padding:2px 7px;font-size:0.83em;">0</span>
-      Cart
-    </button>
+
+  <!-- Floating Mobile Cart Bar -->
+  <div id="mobile-cart-bar" class="fixed bottom-0 left-0 right-0 bg-amber-400 text-black font-bold p-4 hidden justify-between items-center shadow-lg z-50">
+    <span id="mobile-cart-summary">🛒 0 items | ₹0</span>
+    <button onclick="toggleMobileCart(true)" class="bg-black text-amber-300 px-4 py-2 rounded-lg">View Cart</button>
   </div>
-  <!-- Toast notification -->
+
+  <!-- Mobile Cart Drawer -->
+  <div id="mobile-cart-drawer" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-amber-200 rounded-t-3xl shadow-2xl hidden z-50 transition-transform duration-300" style="max-height:80%;overflow-y:auto;">
+    <div class="flex justify-between items-center p-4 border-b border-amber-400">
+      <h3 class="text-lg font-bold">🛒 Your Cart</h3>
+      <button onclick="toggleMobileCart(false)" class="text-red-400 font-bold text-lg">❌</button>
+    </div>
+    <div id="mobileCartList" class="p-4 space-y-3"></div>
+    <div class="p-4 border-t border-amber-400">
+      <div class="flex justify-between text-lg font-bold mb-4">
+        <span>Total:</span>
+        <span id="mobileTotalAmount">₹0</span>
+      </div>
+      <button id="mobileCheckoutBtn" class="w-full bg-amber-400 text-black py-3 rounded-lg font-bold shadow hover:scale-105">Checkout & Pay</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
   <div id="added-toast"
-       style="display:none;position:fixed;bottom:72px;left:50%;transform:translateX(-50%);
+       style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
        background:#222;color:#ffd25a;padding:14px 28px;border-radius:22px;z-index:1001;font-size:1.15em;box-shadow:0 2px 10px #111;">
     Added to cart!
   </div>
+
   <script>
     let menu = {}; let cart = [];
     let orderType = null;
 
     document.querySelectorAll('.orderTypeBtn').forEach(btn => {
-      btn.onclick = () => {
-        orderType = btn.dataset.type;
-        renderOrderTypeForm();
-      };
+      btn.onclick = () => { orderType = btn.dataset.type; renderOrderTypeForm(); };
     });
 
     function renderOrderTypeForm() {
@@ -88,7 +103,7 @@
           <input id="tableNumber" placeholder="Table Number" class="p-3 border border-gray-700 rounded w-full mb-3" required />
           <input id="mobile" placeholder="Mobile Number" class="p-3 border border-gray-700 rounded w-full mb-3" required />
         `;
-      } else if (orderType === 'takeaway' || orderType === 'delivery') {
+      } else {
         html = `
           <input id="customerName" placeholder="Name" class="p-3 border border-gray-700 rounded w-full mb-3" required />
           <input id="mobile" placeholder="Mobile Number" class="p-3 border border-gray-700 rounded w-full mb-3" required />
@@ -110,11 +125,8 @@
         for (const it of items) {
           const variants = it.variants || {};
           const opts = Object.entries(variants).map(([k,v]) => `<option value="${v}">${k} — ₹${v}</option>`).join('');
-          // FINAL: expects image as paneer.png, located in /public/images/paneer.png
-          const imgSrc = it.image ? '/images/' + it.image : '/images/default.jpg';
           html += `
             <div class="bg-gray-800/40 p-3 rounded-xl flex flex-col justify-between items-center">
-              <img src="${imgSrc}" alt="food" class="menu-img mb-2" onerror="this.src='/images/default.jpg'">
               <div class="font-semibold text-center mb-1">${it.name}</div>
               ${it.details ? `<div class="text-xs text-amber-200 mb-2">${it.details}</div>` : ''}
               <select class="variant-select p-1 rounded mb-2" data-name="${it.name}">
@@ -150,7 +162,9 @@
 
     function renderCart() {
       const cartList = document.getElementById('cartList');
-      cartList.innerHTML = cart.map((c, i) => `
+      const mobileCartList = document.getElementById('mobileCartList');
+      if (!cartList || !mobileCartList) return;
+      const html = cart.map((c, i) => `
         <div class="flex justify-between items-center">
           <div>
             <div class="font-medium">${c.name}</div>
@@ -165,61 +179,59 @@
           </div>
         </div>
       `).join('') || '<div class="text-amber-200">Cart is empty</div>';
+      cartList.innerHTML = html;
+      mobileCartList.innerHTML = html;
       const subtotal = cart.reduce((s,c) => s + c.price * c.qty, 0);
       document.getElementById('totalAmount').innerText = '₹' + subtotal;
+      document.getElementById('mobileTotalAmount').innerText = '₹' + subtotal;
+      document.getElementById('mobile-cart-summary').innerText = `🛒 ${cart.reduce((s,c)=>s+c.qty,0)} items | ₹${subtotal}`;
     }
 
     function changeQty(index, delta) {
       cart[index].qty += delta;
-      if (cart[index].qty <= 0) { cart.splice(index,1); }
+      if (cart[index].qty <= 0) cart.splice(index,1);
       renderCart();
       updateCartCount();
     }
 
-    document.getElementById('checkoutBtn').onclick = async () => {
-      if (!orderType) { alert('Select order type'); return; }
-      const name = document.getElementById('customerName')?.value?.trim();
-      const mobile = document.getElementById('mobile')?.value?.trim();
-      const tableNumber = document.getElementById('tableNumber')?.value?.trim() || '';
-      const address = document.getElementById('address')?.value?.trim() || '';
-      if (!name || !mobile || (orderType === 'dinein' && !tableNumber) || ((orderType === 'takeaway' || orderType === 'delivery') && !address)) {
-        alert('Fill all required details');
-        return;
-      }
-      if (cart.length === 0) { alert('Cart is empty'); return; }
-      const payload = {
-        orderType, customerName: name, tableNumber, mobile, address,
-        items: cart.map(c => ({ itemId: (c.name + '|' + c.price).slice(0,40), name: c.name, price: c.price, qty: c.qty }))
-      };
-      const resp = await fetch('/api/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-      if (!resp.ok) { alert('Order failed'); return; }
-      const order = await resp.json();
-      document.body.insertAdjacentHTML('beforeend', `<div id="payModal" class="fixed inset-0 flex items-center justify-center bg-black/60">
-        <div class="bg-white rounded-2xl p-6 text-black max-w-sm text-center">
-          <h3 class="font-bold text-xl mb-2">Order Placed — ₹${order.total}</h3>
-          <p class="text-sm text-gray-600">Show this order ID to complete payment.</p>
-          <div class="mt-4"><button onclick="document.getElementById('payModal').remove()" class="px-4 py-2 bg-gray-800 text-white rounded">Close</button></div>
-        </div></div>`);
-      cart = []; renderCart(); updateCartCount();
-    };
-
     function updateCartCount() {
-      document.getElementById('cart-count').textContent = cart.reduce((sum, c) => sum + c.qty, 0);
+      document.getElementById('mobile-cart-summary').innerText = `🛒 ${cart.reduce((s,c)=>s+c.qty,0)} items | ₹${cart.reduce((s,c)=>s+c.price*c.qty,0)}`;
     }
+
     function showToast(msg) {
       const toast = document.getElementById('added-toast');
       toast.textContent = msg;
       toast.style.display = 'block';
       setTimeout(() => { toast.style.display = 'none'; }, 1400);
     }
-    function scrollToCart() {
-      document.getElementById('cartList').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    function toggleMobileCart(show) {
+      document.getElementById('mobile-cart-drawer').style.display = show ? 'block' : 'none';
     }
 
-    initMenu();
-    renderCart();
-    updateCartCount();
+    async function checkout() {
+      if (!orderType) { alert('Select order type'); return; }
+      const name = document.getElementById('customerName')?.value?.trim();
+      const mobile = document.getElementById('mobile')?.value?.trim();
+      const tableNumber = document.getElementById('tableNumber')?.value?.trim() || '';
+      const address = document.getElementById('address')?.value?.trim() || '';
+      if (!name || !mobile || (orderType==='dinein'&&!tableNumber) || ((orderType!=='dinein')&&!address)) {
+        alert('Fill all required details'); return;
+      }
+      if (cart.length===0){ alert('Cart is empty'); return; }
+      const payload={ orderType, customerName:name, tableNumber, mobile, address,
+        items: cart.map(c=>({ name:c.name, price:c.price, qty:c.qty })) };
+      const resp = await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if (!resp.ok){ alert('Order failed'); return; }
+      const order = await resp.json();
+      alert(`Order placed successfully! Total ₹${order.total}`);
+      cart=[]; renderCart(); toggleMobileCart(false);
+    }
+
+    document.getElementById('checkoutBtn').onclick = checkout;
+    document.getElementById('mobileCheckoutBtn').onclick = checkout;
+
+    initMenu(); renderCart(); updateCartCount();
   </script>
 </body>
 </html>
-
