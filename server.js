@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Atlas connection string
+// MongoDB Atlas connection string (unchanged as requested)
 const MONGO_URI = 'mongodb+srv://akofficial1905_db_user:FbqAuhCOkXLN0XH1@restaurantdata.kxozvbc.mongodb.net/?appName=RESTAURANTDATA';
 
 mongoose.connect(MONGO_URI, {
@@ -19,7 +19,7 @@ mongoose.connect(MONGO_URI, {
 });
 
 mongoose.connection.on('connected', () => {
-  console.log('MongoDB connected!');
+  console.log('MongoDB connected! (Titishya Fast Food)');
 });
 mongoose.connection.on('error', (err) => {
   console.error('MongoDB connection error:', err);
@@ -193,4 +193,3 @@ server.listen(PORT, () => {
 });
 
 io.on('connection', (socket) => { /* no special handling needed */ });
-
