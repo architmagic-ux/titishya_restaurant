@@ -1,10 +1,122 @@
 {
   "Main Course Veg": [
-    { "name": "Paneer Tikka Masala", "variants": { "Half": 130, "Full": 260 }, "image": "paneer.png" },
-    { "name": "Shahi Paneer", "variants": { "Half": 120, "Full": 240 }, "image": "shahi-paneer.jpg" }
+    { "name": "Paneer Tikka Masala", "variants": { "Half (6pc)": 130, "Full (12pc)": 260 } },
+    { "name": "Paneer Do Pyaza", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Shahi Paneer", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Kadhai Paneer", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Paneer Butter Masala", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Dal Makhni", "variants": { "Half (6pc)": 100, "Full (12pc)": 200 } },
+    { "name": "Dal Fry", "variants": { "Half (6pc)": 70, "Full (12pc)": 140 } },
+    { "name": "Mushroom Masala", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Mushroom Do Pyaza", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Paneer Bhurji", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Egg Bhurji", "variants": { "Half (6pc)": 100, "Full (12pc)": 200 } },
+    { "name": "Shahi Paneer Gravy", "variants": { "Half (6pc)": 120, "Full (12pc)": 240 } },
+    { "name": "Mix Veg", "variants": { "Half (6pc)": 120, "Full (12pc)": 200 } },
+    { "name": "Kadhai Mushroom", "variants": { "Half (6pc)": 140, "Full (12pc)": 240 } },
+    { "name": "Chilli Mushroom", "variants": { "Half (6pc)": 140, "Full (12pc)": 240 } }
   ],
-  "Snacks": [
-    { "name": "Veg Burger", "variants": { "Regular": 60 }, "image": "burger.jpg" }
-  ]
-}
 
+  "Main Course Non Veg": [
+    { "name": "Chicken Curry", "variants": { "4 pcs": 180, "8 pcs": 350, "16 pcs": 680 } },
+    { "name": "Chicken Masala", "variants": { "4 pcs": 220, "8 pcs": 400, "16 pcs": 780 } },
+    { "name": "Butter Chicken", "variants": { "4 pcs": 220, "8 pcs": 430, "16 pcs": 820 } },
+    { "name": "Kadhai Chicken", "variants": { "4 pcs": 220, "8 pcs": 400, "16 pcs": 780 } },
+    { "name": "Chicken Do Pyaza", "variants": { "4 pcs": 220, "8 pcs": 400, "16 pcs": 780 } },
+    { "name": "Chicken Tikka Masala", "variants": { "4 pcs": 230, "8 pcs": 450, "16 pcs": 880 } },
+    { "name": "Egg Curry", "variants": { "4 pcs": 180, "8 pcs": 350, "16 pcs": 700 } },
+    { "name": "Chilli Chicken Gravy", "variants": { "4 pcs": 220, "8 pcs": 400, "16 pcs": 780 } },
+    { "name": "Garlic Chicken", "variants": { "4 pcs": 220, "8 pcs": 400, "16 pcs": 780 } }
+  ],
+
+  "Thali": [
+    { "name": "Veg Thali", "variants": { "Plate": 80 }, "details": "Sabzi + Dal + Rice + 2 Tandoori Roti" },
+    { "name": "Special Thali", "variants": { "Plate": 100 }, "details": "Dal + Paneer + Mix Veg + 3 Tandoori Roti + Rice + Salad + Sweet" },
+    { "name": "Egg Thali", "variants": { "Plate": 90 }, "details": "2 Pc Egg Curry + Dal + 2 Tandoori Roti + Rice + Salad" },
+    { "name": "Chicken Thali", "variants": { "Plate": 120 }, "details": "3 Pc Chicken Curry + Dal + 3 Tandoori Roti + Rice + Salad + Sweet" }
+  ],
+
+  "Breads": [
+    { "name": "Tawa Roti", "variants": { "Piece": 8 } },
+    { "name": "Tandoori Butter Roti", "variants": { "Piece": 10 } },
+    { "name": "Tandoori Roti", "variants": { "Piece": 10 } },
+    { "name": "Laccha Paratha", "variants": { "Piece": 30 } },
+    { "name": "Plain Naan", "variants": { "Piece": 30 } },
+    { "name": "Butter Naan", "variants": { "Piece": 35 } },
+    { "name": "Garlic Naan", "variants": { "Piece": 30 } },
+    { "name": "Paneer Naan", "variants": { "Piece": 80 } },
+    { "name": "Chicken Naan", "variants": { "Piece": 80 } }
+  ],
+
+  "Mutton": [
+    { "name": "Mutton Curry (3pc)", "variants": { "Plate": 200 } },
+    { "name": "Mutton Curry (6pc)", "variants": { "Plate": 400 } }
+  ],
+
+  "Chaap": [
+    { "name": "Gravy Chaap", "variants": { "Half": 120, "Full": 240 } },
+    { "name": "Gravy Masala Chaap", "variants": { "Half": 120, "Full": 240 } },
+    { "name": "Chaap Do Pyaza", "variants": { "Half": 120, "Full": 240 } },
+    { "name": "Paneer Chaap Butter Masala", "variants": { "Half": 120, "Full": 240 } }
+  ],
+
+  "Fry Snacks": [
+    { "name": "Crispy Chicken", "variants": { "10 pcs": 200 } },
+    { "name": "Fish Fry", "variants": { "10 pcs": 180 } },
+    { "name": "Chicken Popcorn", "variants": { "10 pcs": 100, "20 pcs": 180 } },
+    { "name": "Chicken Nuggets", "variants": { "10 pcs": 100, "20 pcs": 180 } },
+    { "name": "Veg Popcorn", "variants": { "10 pcs": 80, "20 pcs": 150 } }
+  ],
+
+  "Egg Items": [
+    { "name": "Boiled Egg (1pc)", "variants": { "Piece": 10 } },
+    { "name": "Bread Omelette", "variants": { "Plate": 50 } },
+    { "name": "Egg Roll", "variants": { "Piece": 60 } },
+    { "name": "Chicken Roll", "variants": { "Piece": 80 } }
+  ],
+
+  "Tandoori": [
+    { "name": "Tandoori Chicken (Half)", "variants": { "6pc": 200 } },
+    { "name": "Tandoori Chicken (Full)", "variants": { "12pc": 400 } },
+    { "name": "Afghani Chicken (Half)", "variants": { "6pc": 200 } },
+    { "name": "Afghani Chicken (Full)", "variants": { "12pc": 400 } },
+    { "name": "Malai Chaap", "variants": { "Half": 120, "Full": 240 } },
+    { "name": "Tandoori Chaap", "variants": { "6pc": 120, "12pc": 240 } },
+    { "name": "Chicken Seekh Kabab", "variants": { "6pc": 200, "12pc": 400 } },
+    { "name": "Chicken Tikka", "variants": { "6pc": 200, "12pc": 400 } }
+  ],
+
+  "Rice": [
+    { "name": "Plain Rice", "variants": { "Plate": 60 } },
+    { "name": "Jeera Rice", "variants": { "Plate": 80 } },
+    { "name": "Veg Pulao", "variants": { "Plate": 100 } },
+    { "name": "Mutter Pulao", "variants": { "Plate": 100 } },
+    { "name": "Paneer Pulao", "variants": { "Plate": 120 } },
+    { "name": "Veg Fried Rice", "variants": { "Half": 80, "Full": 120 } },
+    { "name": "Paneer Fried Rice", "variants": { "Half": 100, "Full": 160 } },
+    { "name": "Egg Fried Rice", "variants": { "Half": 100, "Full": 160 } },
+    { "name": "Chicken Fried Rice", "variants": { "Plate":100 } },
+    { "name": "Veg Rice Combo", "variants": { "Plate": 80 } }
+  ],
+"Biryani": [
+  { "name": "Chicken Dum Biryani", "variants": { "Half": 80, "Full": 140 } }
+],
+  "Cold Drink & Water": [
+    { "name": "Cold Drink", "variants": { "Bottle": 20 } },
+    { "name": "Water Bottle", "variants": { "Piece": 20 } }
+  ],
+  "Soup": [
+    { "name": "Tomato Soup", "variants": { "Bowl": 70 } },
+    { "name": "Chicken Soup", "variants": { "Bowl": 80 } }
+  ],
+ "Chinese Snacks": [
+    { "name": "Veg Noodles", "variants": { "Plate": 70 } },
+    { "name": "Paneer Noodles", "variants": { "Plate": 100 } },
+    { "name": "Chicken Noodles", "variants": { "Plate": 100 } },
+    { "name": "Veg Manchurian", "variants": { "6 pcs": 100, "12 pcs":100 } },
+    { "name": "French Fry", "variants": { "Plate": 100 } },
+    { "name": "Honey Chilli Potato", "variants": { "Plate": 120 } },
+    { "name": "Paneer Veg Burger", "variants": { "Plate": 60 } },
+    { "name": "Chicken Burger", "variants": { "Plate": 100 } }
+  ]    
+}
